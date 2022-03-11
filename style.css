@@ -11,3 +11,33 @@ body {
     color: rgb(53, 47, 47);
     background-color: rgb(166, 234, 255);
 }
+
+#gameArea{
+    margin: 0 auto;
+    max-width: 600px;
+    padding: 15px;
+}
+#gameArea .pcGameArea, #gameArea .userGameArea{
+    width: 50%;
+    float:left;
+    margin: 0 0 15px 0;
+    padding:0;
+    display: block;
+    margin-bottom: 20px;
+}
+
+#gameArea .gameField{
+    margin: 5px 15px 0 0;
+    display: block;
+    padding:0;
+}
+#gameArea .gameField div{
+    margin: -1px;
+    display: block;
+    position: relative;
+    float: left;
+    background-color: #fcfcfc;
+    border: 1px solid #a7ddf5;
+    text-align: center;
+    color: #F44336;
+}

@@ -1,3 +1,27 @@
+if (!Function.prototype.bind) {
+    Function.prototype.bind = function(oThis) {
+        if (typeof this !== 'function') {
+            // Внутренняя вызываемая функция
+            throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
+        }
+
+        var aArgs   = Array.prototype.slice.call(arguments, 1),
+            fToBind = this,
+            fNOP    = function() {},
+            fBound  = function() {
+                return fToBind.apply(this instanceof fNOP && oThis
+                    ? this
+                    : oThis,
+                    aArgs.concat(Array.prototype.slice.call(arguments)));
+            };
+
+        fNOP.prototype = this.prototype;
+        fBound.prototype = new fNOP();
+
+        return fBound;
+    };
+}
+
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD: import SeeBattle from "sea-battle";
@@ -57,11 +81,51 @@
          * нужную для игры
          */
         run: function(){
-            this.startNewGame();
+            this.createToolbar();
+            this.createGameFields();
+            this.createFooter();
         },
-        
-        
-        
+        createToolbar: function(){
+            this.toolbar = document.createElement('div');
+            this.toolbar.setAttribute('class', 'toolbar');
+            this.gameArea.appendChild(this.toolbar);
+        },
+        createGameFields: function(){
+            var pcGameArea = document.createElement('div');
+            pcGameArea.setAttribute('class', 'pcGameArea');
+            this.gameArea.appendChild(pcGameArea);
+
+            var userGameArea = document.createElement('div');
+            userGameArea.setAttribute('class', 'userGameArea');
+            this.gameArea.appendChild(userGameArea);
+
+            this.pcInfo = document.createElement('div');
+            pcGameArea.appendChild(this.pcInfo);
+
+            this.userInfo = document.createElement('div');
+            userGameArea.appendChild(this.userInfo);
+
+            this.pcGameField = document.createElement('div');
+            this.pcGameField.setAttribute('class', 'gameField');
+            this.userGameField = document.createElement('div');
+            this.userGameField.setAttribute('class', 'gameField');
+            pcGameArea.appendChild(this.pcGameField);
+            userGameArea.appendChild(this.userGameField);
+        },
+        createFooter: function(){
+            var footer = document.createElement('div');
+            footer.setAttribute('class', 'footer');
+
+            this.startGameButton = document.createElement('button');
+            this.startGameButton.innerHTML = 'Начать игру';
+            this.startGameButton.setAttribute('class', 'btn');
+            this.startGameButton.onclick = function(){
+                this.startNewGame();
+            }.bind(this);
+            footer.appendChild(this.startGameButton);
+
+            this.gameArea.appendChild(footer);
+        },
         startNewGame: function(){
             this.userName = this.userName || prompt('Ваше имя?', '');
             this.pcName = this.pcName || prompt('Имя противника', '');
@@ -91,7 +155,25 @@
         /**
          * Создание/обновление ячеей в игровых полях
          */
-        
+        drawGamePoints: function(){
+            for(var yPoint=0;yPoint<this.gameFieldBorderY.length; yPoint++){
+                for(var xPoint=0;xPoint<this.gameFieldBorderX.length; xPoint++){
+                    var pcPointBlock = this.getOrCreatePointBlock(yPoint, xPoint);
+                    pcPointBlock.onclick = function(e){
+                        this.userFire(e);
+                    }.bind(this);
+                    // если нужно отобразить корабли компбютера
+                    /*if(this._pcShipsMap[yPoint][xPoint] === this.CELL_WITH_SHIP){
+                        pcPointBlock.setAttribute('class', 'ship');
+                    }*/
+
+                    var userPointBlock = this.getOrCreatePointBlock(yPoint, xPoint, 'user');
+                    if(this._userShipsMap[yPoint][xPoint] === this.CELL_WITH_SHIP){
+                        userPointBlock.setAttribute('class', 'ship');
+                    }
+                }
+            }
+        },
 
         /**
          * Высота ячейки полученная из значения ширины
@@ -238,7 +320,7 @@
         },
 
         /**
-         * Возможно вставки корабля горизонтально
+         * возможность вставки корабля горизонтально
          * @param {type} map
          * @param {type} xPoint
          * @param {type} yPoint
@@ -249,7 +331,7 @@
         canPutHorizontal: function(map, xPoint, yPoint, shipLength, coordLength){
             var freePoints = 0;
             for(var x=xPoint;x<coordLength;x++){
-                // текущая и далее по часовй стрелке в гориз направл
+                // текущая и далее по часовой стрелке в горизонтальном направлении
                 if(map[yPoint][x] === this.CELL_EMPTY
                     && map[yPoint-1][x] === this.CELL_EMPTY
                     && map[yPoint-1][x+1] === this.CELL_EMPTY
@@ -266,7 +348,7 @@
         },
 
         /**
-         * Возможно ли вставить корабль вертикально
+         * возможность вставить корабль вертикально
          *
          * @param {type} map
          * @param {type} xPoint
@@ -295,7 +377,7 @@
         },
 
         /**
-         * Обработчик клика по ячейке
+         * обрабатывает клик по ячейке
          * @param {type} e
          */
         userFire: function(event){
@@ -326,8 +408,7 @@
         },
 
         /**
-         * Создает задержку перед ходом компьютрера
-         * необходимую, для того чтобы успеть увидеть чей ход
+         * создает задержку перед ходом компьютера для того, что бы успеть увидеть как он сходил
          */
         prepareToPcFire: function(){
             this._pcGoing = true;
@@ -338,7 +419,7 @@
         },
 
         /**
-         * Выстрел компьютера
+         * атака компьютера
          *
          */
         pcFire: function(){
@@ -368,7 +449,7 @@
             this.updateToolbar();
         },
         /**
-         * Остановка игры
+         * останавливает игру
          */
         stopGame: function(){
             this._gameStopped = true;
@@ -380,7 +461,7 @@
             return this._gameStopped;
         },
         getFireSuccessTemplate: function(){
-            return 'X';
+            return '✖';
         },
         getFireFailTemplate: function(){
             return '&#183;';

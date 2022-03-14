@@ -4,12 +4,12 @@ html {
     -webkit-text-size-adjust: 100%;
 }
 body {
-    margin: 0;
+    margin: 20;
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 14px;
     line-height: 1.4;
     color: rgb(53, 47, 47);
-    background-color: rgb(166, 234, 255);
+    background-color: rgb(234, 250, 255);
 }
 
 #gameArea{
@@ -25,7 +25,6 @@ body {
     display: block;
     margin-bottom: 20px;
 }
-
 #gameArea .gameField{
     margin: 5px 15px 0 0;
     display: block;
@@ -37,7 +36,35 @@ body {
     position: relative;
     float: left;
     background-color: #fcfcfc;
-    border: 1px solid #a7ddf5;
+    border: 1px solid #4274ff;
     text-align: center;
-    color: #F44336;
+    color: #000000;
+}
+#gameArea .gameField div .badge{
+    font-size: 2em;
+    color: #000000;
+}
+#gameArea .gameField .ship{
+    background-color: #7f8bfb;
+    border: 1px solid #052c95;
+}
+#gameArea .btn{
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid #357ebd;
+    white-space: nowrap;
+    padding: 6px 12px;
+    line-height: 1.4;
+    border-radius: 4px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-size: 1.2em;
+    color: #fff;
+    background-color: #7566fb;
 }

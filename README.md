@@ -4,4 +4,4 @@
 
 или 
 
-[Запустить игру](https://github.com/Neejiii/sea_battle/blob/main/index.html)
+[Запустить игру](https://htmlpreview.github.io/?https://github.com/Neejiii/sea_battle/blob/main/index.html)
